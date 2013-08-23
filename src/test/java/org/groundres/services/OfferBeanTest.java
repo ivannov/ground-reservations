@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.groundres.model.Court;
@@ -55,22 +56,56 @@ public class OfferBeanTest extends ArquillianTestsParent {
         assertEquals(6, offers.size());
         for (Offer offer : offers) {
             String formattedPrice = Util.formatPrice(offer);
-            assertTrue("".equals(formattedPrice) || "10".equals(formattedPrice));
+            assertTrue("".equals(formattedPrice) || "10.00".equals(formattedPrice));
         }
     }
 
     @Test
-    public void testAddCourt() {
+    public void testAddOffer() {
         Date now = new Date();
-        Offer newOffer = new Offer(now, 5f, null);
-        Offer returnedOffer = offerBean.addOffer(newOffer);
-        assertEquals(newOffer, returnedOffer);
+        Offer newOffer = saveSampleOffer(now);
         
-        TypedQuery<Offer> query = em.createQuery("SELECT o FROM Offer o WHERE o.timeSlot = :now", Offer.class);
-        query.setParameter("now", now);
-        Offer queryOffer = query.getSingleResult();
-        assertEquals(newOffer, queryOffer);        
+        assertEquals(newOffer, getQueriedOffer(now));        
+    }
+
+    @Test
+    public void testUpdateOffer() throws Exception {
+        Date now = new Date();
+        Offer newOffer = saveSampleOffer(now);
+        
+        newOffer.setPrice(10f);
+        assertEquals(Float.valueOf(10f), getQueriedOffer(now).getPrice());        
+    }
+
+    @Test
+    public void testDeleteOffer() throws Exception {
+        Date now = new Date();
+        Offer newOffer = saveSampleOffer(now);
+        assertNotNull(getQueriedOffer(now));
+        
+        offerBean.deleteOffer(newOffer);
+        try {
+            getQueriedOffer(now);
+            fail();
+        } catch (NoResultException nre) {
+            // OK
+        }
     }
     
-
+    @Test
+    public void testDeleteNonExistingOffer() throws Exception {
+        offerBean.deleteOffer(new Offer(new Date(), 10f, null));
+        offerBean.deleteOffer(null);
+    }
+    
+    private Offer saveSampleOffer(Date now) {
+        Offer newOffer = new Offer(now, 5f, null);
+        return offerBean.saveOffer(newOffer);
+    }
+    
+    private Offer getQueriedOffer(Date now) {
+        TypedQuery<Offer> query = em.createQuery("SELECT o FROM Offer o WHERE o.timeSlot = :now", Offer.class);
+        query.setParameter("now", now);
+        return query.getSingleResult();
+    }
 }

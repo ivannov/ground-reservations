@@ -83,9 +83,20 @@ public class OfferBean {
         return findAllOffersForTimeframe(currentTimestamp, nextCal.getTime());
     }
     
-    public Offer addOffer(Offer offer) {
-        em.persist(offer);
+    public Offer saveOffer(Offer offer) {
+        Long id = offer.getId();
+        if (id == null || em.find(Offer.class, offer.getId()) == null) {
+            em.persist(offer);
+        } else {
+            em.merge(offer);
+        }
         return offer;
+    }
+    
+    public void deleteOffer(Offer offer) {
+        if (offer != null && offer.getId() != null) {
+            em.remove(em.find(Offer.class, offer.getId()));
+        }
     }
 
 }

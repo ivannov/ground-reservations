@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.groundres.model.User;
+import org.groundres.services.CourtBean;
 import org.groundres.services.UserBean;
 
 @WebServlet("/login")
@@ -19,13 +20,16 @@ public class LoginServlet extends HttpServlet {
     
     @EJB
     private UserBean userBean;
+
+    @EJB
+    private CourtBean courtBean;
     
     public LoginServlet() {
         super();
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("index.html").forward(request, response);
+		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,9 +40,9 @@ public class LoginServlet extends HttpServlet {
 		
 		if (user != null) {
 		    request.getSession().setAttribute("loggedUser", user);
-		    getServletContext().getRequestDispatcher("/court").forward(request, response);
+		    response.sendRedirect("court");
 		} else {
-		    request.getRequestDispatcher("index.html").forward(request, response);
+		    request.getRequestDispatcher("login.jsp").forward(request, response);
 		}		
 	}
 

@@ -38,7 +38,7 @@ public class TestDataInserter {
         }
         
         for (Offer offer : data.getOffers()) {
-            offerBean.addOffer(offer);
+            offerBean.saveOffer(offer);
         }
     }
 }

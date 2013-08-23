@@ -1,3 +1,4 @@
+<%@page import="org.groundres.model.User"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.groundres.services.Util"%>
@@ -15,17 +16,35 @@
 <title>Insert title here</title>
 </head>
 <body>
+    <table width="60%">
+    <tr><td align="right">
+    <%
+        User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+        if (loggedUser == null) {
+    %>
+        <a href="login">Login</a>
+    <% } else { %>
+        Добре дошъл, <%= loggedUser.getRealName() %>
+    <% } %>
+        </td></tr>
+    </table>
+    
     <%
     List<Court> courts = (List<Court>) request.getAttribute("courts");
     Map<Court, List<Offer>> offers = (Map<Court, List<Offer>>) request.getAttribute("offers");
-    List<String> timeSlots = (List<String>) request.getAttribute("timeSlots");
+    
+    List<Integer> timeSlots = (List<Integer>) session.getAttribute("timeSlots");
+    List<Offer> offersForLoggedInUser = (List<Offer>) session.getAttribute("offersForLoggedInUser");
     %>
+
+    <form action="court" method="post">
+
     <table>
         <tr>
             <th>Обект</th>
             <%
-            for(String timeSlot : timeSlots) {
-                out.println("<th>" + timeSlot + "</th>");
+            for(int timeSlot : timeSlots) {
+                out.println("<th>" + Util.formatTimeSlot(timeSlot) + "</th>");
             }
             %>
             <th>Телефон</th>
@@ -33,7 +52,7 @@
         <% 
         for (Court court : courts) {
             List<Offer> offersForCourt = offers.get(court);
-            %>
+        %>
             <tr>
                 <td><a href="court?id=<%= court.getId() %>"><%= court.getName() %></a></td>
                 <% for (Offer offer : offersForCourt) { %>
@@ -42,8 +61,25 @@
                 <td><%= court.getPhone() %></td>
             </tr>
             <%
-        }
+        } %>
+            
+    <% if (offersForLoggedInUser != null) { %>
+        <tr>
+        <td></td>
+        <%
+            int index = 0;
+            for (Offer offer : offersForLoggedInUser) {
+                %>
+                <td><input type="text" value="<%= Util.formatPrice(offer) %>" name="<%= index %>"></input></td>
+                <%
+                index++;
+            }
         %>
-    </table>
+        <td><input type="submit" value="Смени"></td>
+        </tr>
+        </table>
+   </form>
+   <% } %>
+    
 </body>
 </html>
