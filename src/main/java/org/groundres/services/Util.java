@@ -17,7 +17,7 @@ public class Util {
         if (offer == null) {
             return "";
         }
-        return new DecimalFormat("#.00").format(offer.getPrice());
+        return new DecimalFormat("#").format(offer.getPrice()) + " лв.";
     }
     
     public static List<Integer> getNextTimeSlots(int nextHours) {
