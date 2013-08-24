@@ -96,7 +96,7 @@
         <version>2.12</version>
         <configuration>
           <systemPropertyVariables>
-            <arquillian.launch>BOSS_AS_REMOTE_7.X</arquillian.launch>
+            <arquillian.launch>JBOSS_AS_REMOTE_7.X</arquillian.launch>
           </systemPropertyVariables>
         </configuration>
       </plugin>
