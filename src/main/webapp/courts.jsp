@@ -30,10 +30,16 @@
     </table>
     
     <%
+    @SuppressWarnings("unchecked")
     List<Court> courts = (List<Court>) request.getAttribute("courts");
+    @SuppressWarnings("unchecked")
     Map<Court, List<Offer>> offers = (Map<Court, List<Offer>>) request.getAttribute("offers");
+    @SuppressWarnings("unchecked")
+    List<List<Offer>> bestOffers = (List<List<Offer>>) request.getAttribute("bestOffers");
     
+    @SuppressWarnings("unchecked")
     List<Integer> timeSlots = (List<Integer>) session.getAttribute("timeSlots");
+    @SuppressWarnings("unchecked")
     List<Offer> offersForLoggedInUser = (List<Offer>) session.getAttribute("offersForLoggedInUser");
     %>
 
@@ -56,13 +62,23 @@
             <tr>
                 <td><a href="court?id=<%= court.getId() %>"><%= court.getName() %></a></td>
                 <% 
-                for (Offer offer : offersForCourt) { 
+                for (int i = 0; i < offersForCourt.size(); i++) {
+                    Offer offer = offersForCourt.get(i);
+                    boolean isBestOffer = bestOffers.get(i).contains(offer);
                     String price = Util.formatPrice(offer);
+                    
                     if (!"".equals(price)) {
                         price += " лв.";
                     }
                 %>
-                <td><%= price %></td>
+                <td><% 
+                    if (isBestOffer) { %>
+                        <b>
+                    <% }  %>
+                    <%= price %>
+                    <% if (isBestOffer) { %>
+                        </b>
+                    <% } %></td>
                 <% } %>
                 <td><%= court.getPhone() %></td>
             </tr>

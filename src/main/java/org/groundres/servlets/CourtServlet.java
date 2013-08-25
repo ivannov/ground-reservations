@@ -38,19 +38,19 @@ public class CourtServlet extends HttpServlet {
             request.setAttribute("court", court);
             request.getRequestDispatcher("court.jsp").forward(request, response);
         } else {
-            request.setAttribute("courts", courtBean.findAllCourts());
-            Map<Court, List<Offer>> promotedOffers = offerBean.findAllOfferPricesForNextHours(6);
+            Map<Court, List<Offer>> nextOffers = offerBean.findAllOfferPricesForNextHours(6);
             
             User loggedUser = (User) request.getSession().getAttribute("loggedUser");
             if (loggedUser != null) {
-                for (Court court : promotedOffers.keySet()) {
+                for (Court court : nextOffers.keySet()) {
                     if (court.getHost().equals(loggedUser)) {
-                        request.getSession().setAttribute("offersForLoggedInUser", promotedOffers.get(court));
+                        request.getSession().setAttribute("offersForLoggedInUser", nextOffers.get(court));
                     }
                 }                
-            }
-            
-            request.setAttribute("offers", promotedOffers);
+            }            
+            request.setAttribute("courts", courtBean.findAllCourts());
+            request.setAttribute("offers", nextOffers);
+            request.setAttribute("bestOffers", offerBean.getBestOffers(nextOffers));
             request.getSession().setAttribute("timeSlots", getNextTimeSlots(6));
 
             request.getRequestDispatcher("courts.jsp").forward(request, response);            
@@ -75,7 +75,7 @@ public class CourtServlet extends HttpServlet {
                         offer.setCourt(((User) request.getSession().getAttribute("loggedUser")).getCourt());
                         offer.setTimeSlot(toDate(((List<Integer>)request.getSession().getAttribute("timeSlots")).get(index)));
                     }
-                    offer.setPrice(Float.valueOf(offerPriceString));
+                    offer.setPrice(Integer.valueOf(offerPriceString));
                     offerBean.saveOffer(offer);
                 }
                 index++;

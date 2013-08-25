@@ -36,10 +36,10 @@ public class TestDataBuilder {
         courts.add(akademik);
         for (int i = 0; i < 24; i++) {
             if (i % 2 == 0) {
-                offers.add(new Offer(buildDate(i), 10f, slavia));
-                offers.add(new Offer(buildDate(i), 10f, akademik));
-                offers.add(new Offer(buildDateTomorrow(i), 10f, slavia));
-                offers.add(new Offer(buildDateTomorrow(i), 10f, akademik));
+                offers.add(new Offer(buildDate(i), 10, slavia));
+                offers.add(new Offer(buildDate(i), 10, akademik));
+                offers.add(new Offer(buildDateTomorrow(i), 10, slavia));
+                offers.add(new Offer(buildDateTomorrow(i), 10, akademik));
             }
         }
         

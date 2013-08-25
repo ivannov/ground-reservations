@@ -35,7 +35,7 @@ public class Offer implements Serializable {
     private Date timeSlot;
 
     @Column
-    private Float price;
+    private Integer price;
 
     @ManyToOne
     private Court court;
@@ -43,7 +43,7 @@ public class Offer implements Serializable {
     public Offer() {
     }
 
-    public Offer(Date timeSlot, Float price, Court court) {
+    public Offer(Date timeSlot, Integer price, Court court) {
         this.timeSlot = timeSlot;
         this.price = price;
         this.court = court;
@@ -73,11 +73,11 @@ public class Offer implements Serializable {
         this.timeSlot = timeSlot;
     }
 
-    public Float getPrice() {
+    public Integer getPrice() {
         return this.price;
     }
 
-    public void setPrice(final Float price) {
+    public void setPrice(final Integer price) {
         this.price = price;
     }
 

@@ -13,11 +13,8 @@ import org.groundres.model.Offer;
 
 public class Util {
     
-    public static String formatPrice(Offer offer) {
-        if (offer == null) {
-            return "";
-        }
-        return new DecimalFormat("#").format(offer.getPrice());
+    public static String formatPrice(Offer offer) {        
+        return offer == null ? "" : offer.getPrice().toString();
     }
     
     public static List<Integer> getNextTimeSlots(int nextHours) {
@@ -41,6 +38,7 @@ public class Util {
         cal.set(HOUR_OF_DAY, hour);
         cal.set(MINUTE, 0);
         cal.set(SECOND, 0);
+        cal.set(MILLISECOND, 0);
         
         return cal.getTime();
     }

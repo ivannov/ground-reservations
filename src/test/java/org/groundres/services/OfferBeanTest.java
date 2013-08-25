@@ -1,10 +1,12 @@
 package org.groundres.services;
 
-import static org.junit.Assert.*;
 import static org.groundres.test.TestDataBuilder.*;
+import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +58,7 @@ public class OfferBeanTest extends ArquillianTestsParent {
         assertEquals(6, offers.size());
         for (Offer offer : offers) {
             String formattedPrice = Util.formatPrice(offer);
-            assertTrue("".equals(formattedPrice) || "10.00".equals(formattedPrice));
+            assertTrue("".equals(formattedPrice) || "10".equals(formattedPrice));
         }
     }
 
@@ -73,8 +75,8 @@ public class OfferBeanTest extends ArquillianTestsParent {
         Date now = new Date();
         Offer newOffer = saveSampleOffer(now);
         
-        newOffer.setPrice(10f);
-        assertEquals(Float.valueOf(10f), getQueriedOffer(now).getPrice());        
+        newOffer.setPrice(10);
+        assertEquals(Integer.valueOf(10), getQueriedOffer(now).getPrice());        
     }
 
     @Test
@@ -94,12 +96,28 @@ public class OfferBeanTest extends ArquillianTestsParent {
     
     @Test
     public void testDeleteNonExistingOffer() throws Exception {
-        offerBean.deleteOffer(new Offer(new Date(), 10f, null));
+        offerBean.deleteOffer(new Offer(new Date(), 10, null));
         offerBean.deleteOffer(null);
     }
     
+    @Test
+    public void testGetBestOffers() throws Exception {
+        Map<Court, List<Offer>> offersForCourts = buildTestOffersMap();
+        List<List<Offer>> bestOffers = offerBean.getBestOffers(offersForCourts);
+        assertEquals(4, bestOffers.size());
+        assertEquals(1, bestOffers.get(0).size());
+        assertEquals("Akademik", bestOffers.get(0).get(0).getCourt().getName());
+        assertEquals(1, bestOffers.get(1).size());
+        assertEquals("Slavia", bestOffers.get(1).get(0).getCourt().getName());
+        assertEquals(2, bestOffers.get(2).size());
+        assertTrue(bestOffers.get(2).contains(new Offer(Util.toDate(12), 5, new Court("Slavia", "Ovcha kupel"))));
+        assertTrue(bestOffers.get(2).contains(new Offer(Util.toDate(12), 5, new Court("Malinova dolina", "Malinova dolina"))));
+        assertEquals(0, bestOffers.get(3).size());
+        assertFalse(bestOffers.get(3).contains(new Offer(Util.toDate(12), 5, new Court("Malinova dolina", "Malinova dolina"))));
+    }
+    
     private Offer saveSampleOffer(Date now) {
-        Offer newOffer = new Offer(now, 5f, null);
+        Offer newOffer = new Offer(now, 5, null);
         return offerBean.saveOffer(newOffer);
     }
     
@@ -107,5 +125,32 @@ public class OfferBeanTest extends ArquillianTestsParent {
         TypedQuery<Offer> query = em.createQuery("SELECT o FROM Offer o WHERE o.timeSlot = :now", Offer.class);
         query.setParameter("now", now);
         return query.getSingleResult();
+    }
+    
+    private Map<Court, List<Offer>> buildTestOffersMap() {
+        Map<Court, List<Offer>> offersForCourts = new HashMap<Court, List<Offer>>();
+        
+        Court court1 = new Court("Akademik", "Geo Milev");
+        List<Offer> offers1 = Arrays.asList(new Offer(Util.toDate(10), 5, court1),
+                null,
+                new Offer(Util.toDate(12), 9, court1),
+                null);
+        offersForCourts.put(court1, offers1);
+        
+        Court court2 = new Court("Slavia", "Ovcha kupel");
+        List<Offer> offers2 = Arrays.asList(new Offer(Util.toDate(10), 8, court2),
+                new Offer(Util.toDate(11), 7, court2),
+                new Offer(Util.toDate(12), 5, court2),
+                null);
+        offersForCourts.put(court2, offers2);
+        
+        Court court3 = new Court("Malinova dolina", "Malinova dolina");
+        List<Offer> offers3 = Arrays.asList(new Offer(Util.toDate(10), 6, court3),
+                new Offer(Util.toDate(11), 10, court3),
+                new Offer(Util.toDate(12), 5, court3),
+                null);
+        offersForCourts.put(court3, offers3);
+        
+        return offersForCourts;
     }
 }

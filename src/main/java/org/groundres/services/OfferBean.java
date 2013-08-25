@@ -99,4 +99,43 @@ public class OfferBean {
         }
     }
 
+    public List<List<Offer>> getBestOffers(Map<Court, List<Offer>> offersForCourts) {
+        List<List<Offer>> bestOffers = new ArrayList<List<Offer>>();
+        
+        for (Court court : offersForCourts.keySet()) {
+            List<Offer> offers = offersForCourts.get(court);
+            for (int i = 0; i < offers.size(); i++) {
+                Offer currentOffer = offers.get(i);
+                if (bestOffers.size() == i) {
+                    bestOffers.add(initializeBestOffersWithOffer(currentOffer));
+                } else {
+                    if (currentOffer != null) {
+                        List<Offer> bestOffersForTimeslot = bestOffers.get(i);
+                        if (bestOffersForTimeslot.size() > 0) {
+                            Offer currentBest = bestOffersForTimeslot.get(0);
+                            if (currentBest.getPrice() > currentOffer.getPrice()) {
+                                bestOffersForTimeslot.clear();
+                                bestOffersForTimeslot.add(currentOffer);
+                            } else if (currentBest.getPrice() == currentOffer.getPrice()) {
+                                bestOffersForTimeslot.add(currentOffer);
+                            }
+                        } else {
+                            bestOffersForTimeslot.add(currentOffer);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return bestOffers;
+    }
+
+    private List<Offer> initializeBestOffersWithOffer(Offer currentOffer) {
+        List<Offer> currentBestOffers = new ArrayList<Offer>();
+        if (currentOffer != null) {
+            currentBestOffers.add(currentOffer);
+        }
+        return currentBestOffers;
+    }
+
 }

@@ -26,7 +26,7 @@ public class UtilTest {
     
     @Test
     public void testFormatPrice() throws Exception {
-        assertEquals("5", formatPrice(new Offer(new Date(), 5f, null)));
+        assertEquals("5", formatPrice(new Offer(new Date(), 5, null)));
         assertEquals("", formatPrice(null));
     }
     
