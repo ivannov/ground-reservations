@@ -55,8 +55,14 @@
         %>
             <tr>
                 <td><a href="court?id=<%= court.getId() %>"><%= court.getName() %></a></td>
-                <% for (Offer offer : offersForCourt) { %>
-                <td><%= Util.formatPrice(offer) %> </td>
+                <% 
+                for (Offer offer : offersForCourt) { 
+                    String price = Util.formatPrice(offer);
+                    if (!"".equals(price)) {
+                        price += " лв.";
+                    }
+                %>
+                <td><%= price %></td>
                 <% } %>
                 <td><%= court.getPhone() %></td>
             </tr>
