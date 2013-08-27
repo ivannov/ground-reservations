@@ -94,6 +94,10 @@ public class Offer implements Serializable {
         String result = getClass().getSimpleName() + " ";
         if (price != null)
             result += "price: " + price;
+        if (court != null)
+            result += "court: " + court.getName();
+        if (timeSlot != null)
+            result += "timeSlot: " + timeSlot.toString();
         return result;
     }
 

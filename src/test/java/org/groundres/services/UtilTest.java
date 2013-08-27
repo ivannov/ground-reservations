@@ -33,8 +33,14 @@ public class UtilTest {
     @Test
     public void testToDate() throws Exception {
         Calendar cal = getCalendar();
+        
         cal.setTime(toDate(10));
         assertEquals(10, cal.get(Calendar.HOUR));
+        
+        cal.setTime(toDate(10, 10, 10));
+        assertEquals(10, cal.get(Calendar.HOUR));
+        assertEquals(10, cal.get(Calendar.MINUTE));
+        assertEquals(10, cal.get(Calendar.SECOND));
     }
 
 }

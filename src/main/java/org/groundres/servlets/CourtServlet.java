@@ -38,7 +38,8 @@ public class CourtServlet extends HttpServlet {
             request.setAttribute("court", court);
             request.getRequestDispatcher("court.jsp").forward(request, response);
         } else {
-            Map<Court, List<Offer>> nextOffers = offerBean.findAllOfferPricesForNextHours(6);
+            List<Court> courts = courtBean.findAllCourts();
+            Map<Court, List<Offer>> nextOffers = offerBean.findAllOffersForNextHoursGroupedByCourt(courts, 6);
             
             User loggedUser = (User) request.getSession().getAttribute("loggedUser");
             if (loggedUser != null) {
@@ -48,7 +49,7 @@ public class CourtServlet extends HttpServlet {
                     }
                 }                
             }            
-            request.setAttribute("courts", courtBean.findAllCourts());
+            request.setAttribute("courts", courts);
             request.setAttribute("offers", nextOffers);
             request.setAttribute("bestOffers", offerBean.getBestOffers(nextOffers));
             request.getSession().setAttribute("timeSlots", getNextTimeSlots(6));

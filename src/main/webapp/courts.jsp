@@ -1,3 +1,4 @@
+<%@page import="org.groundres.services.OfferBean"%>
 <%@page import="org.groundres.model.User"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -13,17 +14,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; UTF-8">
-<title>Insert title here</title>
+<title>Всички кортове</title>
 </head>
 <body>
     <table width="60%">
     <tr><td align="right">
     <%
         User loggedUser = (User) request.getSession().getAttribute("loggedUser");
-        if (loggedUser == null) {
+        if (loggedUser != null) {
     %>
-        <a href="login">Login</a>
-    <% } else { %>
         Добре дошъл, <%= loggedUser.getRealName() %>
     <% } %>
         </td></tr>
@@ -57,7 +56,7 @@
         </tr>
         <% 
         for (Court court : courts) {
-            List<Offer> offersForCourt = offers.get(court);
+            List<Offer> offersForCourt = offers.get(court);            
         %>
             <tr>
                 <td><a href="court?id=<%= court.getId() %>"><%= court.getName() %></a></td>

@@ -12,7 +12,9 @@ import java.util.TimeZone;
 import org.groundres.model.Offer;
 
 public class Util {
-    
+
+    static final String BG_TIME_ZONE_ID = "Europe/Sofia";
+
     public static String formatPrice(Offer offer) {        
         return offer == null ? "" : offer.getPrice().toString();
     }
@@ -33,18 +35,21 @@ public class Util {
         return new DecimalFormat("00").format(hour) + ":00";
     }
     
-    public static Date toDate(int hour) {
+    public static Date toDate(int hours) {
+        return toDate(hours, 0, 0);
+    }
+    
+    public static Date toDate(int hours, int minutes, int seconds) {
         Calendar cal = getCalendar();
-        cal.set(HOUR_OF_DAY, hour);
-        cal.set(MINUTE, 0);
-        cal.set(SECOND, 0);
+        cal.set(HOUR_OF_DAY, hours);
+        cal.set(MINUTE, minutes);
+        cal.set(SECOND, seconds);
         cal.set(MILLISECOND, 0);
-        
-        return cal.getTime();
+        return cal.getTime();        
     }
 
-    static Calendar getCalendar() {
-        return getInstance(TimeZone.getTimeZone(OfferBean.BG_TIME_ZONE_ID));
+    public static Calendar getCalendar() {
+        return getInstance(TimeZone.getTimeZone(BG_TIME_ZONE_ID));
     }
     
     

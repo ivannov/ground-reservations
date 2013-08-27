@@ -22,7 +22,7 @@ public class CourtBeanTest extends ArquillianTestsParent {
     
     @Test
     public void testAddCourt() {
-        Court newCourt = new Court("Малинова Долина", "Кортовете на Малинова Долина", "0888888888", "кв. Малинова Долина", 10.0f, null, new HashSet<Offer>());
+        Court newCourt = new Court("Малинова Долина", "Кортовете на Малинова Долина", "0888888888", "кв. Малинова Долина", 10, null, new HashSet<Offer>());
         Court returnedCourt = courtBean.addCourt(newCourt);
         assertEquals(newCourt, returnedCourt);
         

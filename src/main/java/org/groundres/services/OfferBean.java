@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -21,7 +20,6 @@ import org.groundres.model.Offer;
 @LocalBean
 public class OfferBean {
     
-    static final String BG_TIME_ZONE_ID = "Europe/Sofia";
     private static final int MILLIS_PER_HOUR = 1000 * 60 * 60;
     
     @PersistenceContext
@@ -43,27 +41,33 @@ public class OfferBean {
         return query.getResultList();
     }
 
-    public Map<Court, List<Offer>> findAllOfferPricesForNextHours(int nextHours) {
-        Map<Court, List<Offer>> groupedOffers = new HashMap<Court, List<Offer>>();
+    public Map<Court, List<Offer>> findAllOffersForNextHoursGroupedByCourt(List<Court> courts, int nextHours) {
+        Map<Court, List<Offer>> result = new HashMap<Court, List<Offer>>(courts.size());
+        
+        for (Court court : courts) {
+            result.put(court, initializeCourtOffers(nextHours));
+        }
         
         Date now = new Date();
-        List<Offer> allOffersForTimeframe = getAllOffersForNextHours(now, nextHours);                
+        List<Offer> allOffersForTimeframe = findAllOffersForTimeframe(now, getTimeStampAfter(now, nextHours));                
         
         for (Offer offer : allOffersForTimeframe) {
             Court court = offer.getCourt();
-            List<Offer> courtOffers = groupedOffers.get(court);
-            
-            if (courtOffers == null) {
-                courtOffers = initializeCourtOffers(nextHours);
-                groupedOffers.put(court, courtOffers);
-            }
+            List<Offer> courtOffers = result.get(court);
             
             int hourDifference = (int) (offer.getTimeSlot().getTime() - now.getTime())
                     / MILLIS_PER_HOUR;
             courtOffers.set(hourDifference, offer);
         }
         
-        return groupedOffers;
+        return result;
+    }
+    
+    private Date getTimeStampAfter(Date currentTimestamp, int nextHours) {
+        Calendar nextCal = Util.getCalendar();
+        nextCal.setTime(currentTimestamp);
+        nextCal.add(Calendar.HOUR_OF_DAY, nextHours);
+        return nextCal.getTime();
     }
 
     private List<Offer> initializeCourtOffers(int nextHours) {
@@ -74,13 +78,6 @@ public class OfferBean {
         }
         
         return result;
-    }
-
-    private List<Offer> getAllOffersForNextHours(Date currentTimestamp, int nextHours) {
-        Calendar nextCal = Calendar.getInstance(TimeZone.getTimeZone(BG_TIME_ZONE_ID));
-        nextCal.setTime(currentTimestamp);
-        nextCal.add(Calendar.HOUR_OF_DAY, nextHours);
-        return findAllOffersForTimeframe(currentTimestamp, nextCal.getTime());
     }
     
     public Offer saveOffer(Offer offer) {
@@ -129,13 +126,22 @@ public class OfferBean {
         
         return bestOffers;
     }
-
+    
     private List<Offer> initializeBestOffersWithOffer(Offer currentOffer) {
         List<Offer> currentBestOffers = new ArrayList<Offer>();
         if (currentOffer != null) {
             currentBestOffers.add(currentOffer);
         }
         return currentBestOffers;
+    }
+    
+    public void insertDaylyOffers(Court court, int dayOfYear) {
+        for (int i = Court.DEFAULT_START_HOUR; i <= Court.DEFAULT_END_HOUR; i++) {
+            Calendar cal = Util.getCalendar();
+            cal.setTime(Util.toDate(i));
+            cal.set(Calendar.DAY_OF_YEAR, dayOfYear);
+            saveOffer(new Offer(cal.getTime(), court.getDefaultPrice(), court));
+        }
     }
 
 }

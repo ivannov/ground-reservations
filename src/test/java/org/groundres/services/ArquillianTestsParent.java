@@ -54,7 +54,7 @@ public abstract class ArquillianTestsParent {
         utx.begin();
         em.joinTransaction();
         
-        TestDataBuilder builder = TestDataBuilder.build();
+        TestDataBuilder builder = TestDataBuilder.build(true);
         
         for (User user : builder.getUsers()) {            
             em.persist(user);

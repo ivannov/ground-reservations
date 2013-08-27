@@ -15,7 +15,7 @@
     <tr><td>Описание:</td><td><%= court.getDescription() %></td></tr>
     <tr><td>Адрес:</td><td><%= court.getAddress() %></td></tr>
     <tr><td>Телефон:</td><td><%= court.getPhone() %></td></tr>
-    <tr><td>Цена:</td><td><%= new DecimalFormat("#.##").format(court.getDefaultPrice()) %> лв.</td></tr>
+    <tr><td>Цена:</td><td><%= court.getDefaultPrice() %> лв.</td></tr>
     <tr><td>Лице за контакт:</td><td><%= court.getHost().getRealName() %></td></tr>    
     </table>
 

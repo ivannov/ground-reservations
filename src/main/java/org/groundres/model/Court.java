@@ -27,6 +27,9 @@ public class Court implements Serializable {
 
     private static final long serialVersionUID = -6294720529431245686L;
 
+    public static final int DEFAULT_START_HOUR = 7;
+    public static final int DEFAULT_END_HOUR = 23;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
@@ -49,7 +52,7 @@ public class Court implements Serializable {
     private String address;
 
     @Column
-    private Float defaultPrice;
+    private Integer defaultPrice;
 
     @OneToOne
     private User host;
@@ -64,7 +67,7 @@ public class Court implements Serializable {
         this(name, null, null, address, null, null, null);
     }
     
-    public Court(String name, String description, String phone, String address, Float defaultPrice,
+    public Court(String name, String description, String phone, String address, Integer defaultPrice,
             User host, Set<Offer> offers) {
         this.name = name;
         this.description = description;
@@ -123,11 +126,11 @@ public class Court implements Serializable {
         this.address = address;
     }
 
-    public Float getDefaultPrice() {
+    public Integer getDefaultPrice() {
         return this.defaultPrice;
     }
 
-    public void setDefaultPrice(final Float defaultPrice) {
+    public void setDefaultPrice(final Integer defaultPrice) {
         this.defaultPrice = defaultPrice;
     }
 

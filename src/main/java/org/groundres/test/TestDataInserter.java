@@ -1,5 +1,7 @@
 package org.groundres.test;
 
+import java.util.Calendar;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -7,11 +9,11 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 import org.groundres.model.Court;
-import org.groundres.model.Offer;
 import org.groundres.model.User;
 import org.groundres.services.CourtBean;
 import org.groundres.services.OfferBean;
 import org.groundres.services.UserBean;
+import org.groundres.services.Util;
 
 @Singleton
 @LocalBean
@@ -27,7 +29,7 @@ public class TestDataInserter {
     
     @PostConstruct
     public void insertData() {
-        TestDataBuilder data = TestDataBuilder.build();
+        TestDataBuilder data = TestDataBuilder.build(false);
         
         for (User user : data.getUsers()) {            
             userBean.addUser(user);
@@ -35,10 +37,8 @@ public class TestDataInserter {
         
         for (Court court : data.getCourts()) {
             courtBean.addCourt(court);
-        }
-        
-        for (Offer offer : data.getOffers()) {
-            offerBean.saveOffer(offer);
-        }
+            offerBean.insertDaylyOffers(court, Util.getCalendar().get(Calendar.DAY_OF_YEAR));
+            offerBean.insertDaylyOffers(court, Util.getCalendar().get(Calendar.DAY_OF_YEAR) + 1);
+        }        
     }
 }

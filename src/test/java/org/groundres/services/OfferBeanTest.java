@@ -1,6 +1,5 @@
 package org.groundres.services;
 
-import static org.groundres.test.TestDataBuilder.*;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
@@ -25,6 +24,9 @@ public class OfferBeanTest extends ArquillianTestsParent {
 
     @Inject
     private OfferBean offerBean;
+    
+    @Inject
+    private CourtBean courtBean;
 
     @Test
     public void testFindOffersForCourt() {
@@ -35,13 +37,13 @@ public class OfferBeanTest extends ArquillianTestsParent {
     
     @Test
     public void testFindOffersForTimeframe() throws Exception {
-        Date startDate = buildDate(10, 15, 23);
-        Date endDate = buildDate(18, 21, 11);
+        Date startDate = Util.toDate(10, 15, 23);
+        Date endDate = Util.toDate(18, 21, 11);
         
         List<Offer> offersForTimeframe = offerBean.findAllOffersForTimeframe(startDate, endDate);
         assertEquals(8, offersForTimeframe.size());
         
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Util.getCalendar();
         for (Offer offer : offersForTimeframe) {
             cal.setTime(offer.getTimeSlot());
             int hourOfOffer = cal.get(Calendar.HOUR_OF_DAY);
@@ -52,7 +54,7 @@ public class OfferBeanTest extends ArquillianTestsParent {
     
     @Test
     public void testFindAllOfferPricesForNextHours() throws Exception {
-        Map<Court, List<Offer>> offerPrices = offerBean.findAllOfferPricesForNextHours(6);
+        Map<Court, List<Offer>> offerPrices = offerBean.findAllOffersForNextHoursGroupedByCourt(courtBean.findAllCourts(), 6);
         assertEquals(2, offerPrices.keySet().size());
         List<Offer> offers = offerPrices.get(new Court("Славия", "Овча купел"));
         assertEquals(6, offers.size());
@@ -114,6 +116,23 @@ public class OfferBeanTest extends ArquillianTestsParent {
         assertTrue(bestOffers.get(2).contains(new Offer(Util.toDate(12), 5, new Court("Malinova dolina", "Malinova dolina"))));
         assertEquals(0, bestOffers.get(3).size());
         assertFalse(bestOffers.get(3).contains(new Offer(Util.toDate(12), 5, new Court("Malinova dolina", "Malinova dolina"))));
+    }
+    
+    @Test
+    public void testInsertDaylyOffers() throws Exception {
+        em.createQuery("DELETE FROM Offer").executeUpdate();
+        
+        Court slavia = courtBean.findCourtByName("Славия");        
+        offerBean.insertDaylyOffers(slavia, Util.getCalendar().get(Calendar.DAY_OF_YEAR));
+        
+        List<Offer> daylyOffers = offerBean.findAllOffersForCourt(slavia);
+        assertEquals(Court.DEFAULT_END_HOUR - Court.DEFAULT_START_HOUR + 1, daylyOffers.size());
+        assertEquals("Славия", daylyOffers.get(0).getCourt().getName());
+        assertEquals(slavia.getDefaultPrice(), daylyOffers.get(0).getPrice());
+        for (Offer offer : daylyOffers) {
+            assertTrue(offer.getTimeSlot().compareTo(Util.toDate(Court.DEFAULT_START_HOUR)) >= 0);
+            assertTrue(offer.getTimeSlot().compareTo(Util.toDate(Court.DEFAULT_END_HOUR)) <= 0);            
+        }
     }
     
     private Offer saveSampleOffer(Date now) {
