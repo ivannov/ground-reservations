@@ -70,7 +70,7 @@
                         price += " лв.";
                     }
                 %>
-                <td><% 
+                <td align="center"><% 
                     if (isBestOffer) { %>
                         <b>
                     <% }  %>
@@ -79,14 +79,14 @@
                         </b>
                     <% } %></td>
                 <% } %>
-                <td><%= court.getPhone() %></td>
+                <td align="center"><%= court.getPhone() %></td>
             </tr>
             <%
         } %>
             
     <% if (offersForLoggedInUser != null) { %>
         <tr>
-        <td></td>
+        <td><a href="court?id=<%= loggedUser.getCourt().getId() %>"><%= loggedUser.getCourt().getName() %></a></td>
         <%
             int index = 0;
             for (Offer offer : offersForLoggedInUser) {

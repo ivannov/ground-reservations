@@ -42,13 +42,21 @@ public class CourtServlet extends HttpServlet {
             Map<Court, List<Offer>> nextOffers = offerBean.findAllOffersForNextHoursGroupedByCourt(courts, 6);
             
             User loggedUser = (User) request.getSession().getAttribute("loggedUser");
+            Court courtOfLoggedInUser = null;
             if (loggedUser != null) {
                 for (Court court : nextOffers.keySet()) {
                     if (court.getHost().equals(loggedUser)) {
                         request.getSession().setAttribute("offersForLoggedInUser", nextOffers.get(court));
+                        courtOfLoggedInUser = court;
                     }
                 }                
-            }            
+            }
+            
+            if (courtOfLoggedInUser != null) {                
+                nextOffers.remove(courtOfLoggedInUser);
+                courts.remove(courtOfLoggedInUser);
+            }
+            
             request.setAttribute("courts", courts);
             request.setAttribute("offers", nextOffers);
             request.setAttribute("bestOffers", offerBean.getBestOffers(nextOffers));
