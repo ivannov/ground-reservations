@@ -44,7 +44,7 @@
 
     <form action="court" method="post">
 
-    <table>
+    <table width="100%">
         <tr>
             <th>Обект</th>
             <%
