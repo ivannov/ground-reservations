@@ -28,7 +28,7 @@ public class Court implements Serializable {
     private static final long serialVersionUID = -6294720529431245686L;
 
     public static final int DEFAULT_START_HOUR = 11;
-    public static final int DEFAULT_END_HOUR = 16;
+    public static final int DEFAULT_END_HOUR = 23;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

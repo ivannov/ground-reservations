@@ -13,20 +13,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Всички кортове</title>
+<STYLE type="text/css">
+      TABLE  { background: silver; empty-cells: show; border: none; border-spacing: 1pt; }
+      TD     { background: white; font-family: Verdana, Arial; font-size: 80%; }
+      TH     { background: silver; font-family: Verdana, Arial; font-size: 80%; }
+</STYLE>
 </head>
 <body>
-    <table width="60%">
-    <tr><td align="right">
     <%
         User loggedUser = (User) request.getSession().getAttribute("loggedUser");
         if (loggedUser != null) {
     %>
+    <table width="60%">
+    <tr><td align="right">
         Добре дошъл, <%= loggedUser.getRealName() %>
-    <% } %>
         </td></tr>
     </table>
+    <% } %>
     
     <%
     @SuppressWarnings("unchecked")
@@ -43,7 +48,6 @@
     %>
 
     <form action="court" method="post">
-
     <table width="100%">
         <tr>
             <th>Обект</th>
@@ -98,9 +102,9 @@
         %>
         <td><input type="submit" value="Смени"></td>
         </tr>
-        </table>
-   </form>
    <% } %>
+     </table>
+   </form>
     
 </body>
 </html>
