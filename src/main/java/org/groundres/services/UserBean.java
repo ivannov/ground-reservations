@@ -16,8 +16,15 @@ public class UserBean {
     @PersistenceContext
     private EntityManager em;
 
-    public User addUser(User user) {
-        em.persist(user);
+    public User saveUser(User user) {
+        Long id = user.getId();
+        
+        if (id == null || em.find(User.class, id) == null) {
+            em.persist(user);
+        } else {
+            em.merge(user);
+        }
+        
         return user;
     }
     
@@ -33,4 +40,5 @@ public class UserBean {
         
         return user;
     }
+    
 }

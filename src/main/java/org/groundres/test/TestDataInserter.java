@@ -32,7 +32,7 @@ public class TestDataInserter {
         TestDataBuilder data = TestDataBuilder.build(false);
         
         for (User user : data.getUsers()) {            
-            userBean.addUser(user);
+            userBean.saveUser(user);
         }
         
         for (Court court : data.getCourts()) {

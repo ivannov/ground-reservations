@@ -43,7 +43,7 @@ public class AdminServlet extends HttpServlet {
 	    host.setUsername(request.getParameter("userName"));
 	    host.setPassword("abc123");
 	    host.setRealName(request.getParameter("realName"));
-	    userBean.addUser(host);
+	    userBean.saveUser(host);
 	    
 	    Court court = new Court();
 	    court.setName(request.getParameter("courtName"));

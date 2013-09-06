@@ -26,11 +26,9 @@
         User loggedUser = (User) request.getSession().getAttribute("loggedUser");
         if (loggedUser != null) {
     %>
-    <table width="60%">
-    <tr><td align="right">
+    <div align="right">
         Добре дошъл, <%= loggedUser.getRealName() %>
-        </td></tr>
-    </table>
+    </div>
     <% } %>
     
     <%
